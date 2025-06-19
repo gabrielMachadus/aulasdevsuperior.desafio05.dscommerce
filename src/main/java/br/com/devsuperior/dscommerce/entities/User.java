@@ -2,82 +2,97 @@ package br.com.devsuperior.dscommerce.entities;
 
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "tb_user")
 @EqualsAndHashCode
-public class User {
+public class User implements UserDetails {
 
+    @Setter
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Setter
+    @Getter
     private String name;
+    @Setter
+    @Getter
     @Column(unique = true)
     private String email;
+    @Setter
+    @Getter
     private String phone;
+    @Setter
+    @Getter
     private LocalDate birthDate;
+    @Setter
+    @Getter
     private String password;
+
+    @ManyToMany
+    @JoinTable(name = "tb_user_role",
+            joinColumns = @JoinColumn (name = "user_id"),
+            inverseJoinColumns =  @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+    @Getter
     @OneToMany(mappedBy = "client")
     private List<Order> orders = new ArrayList();
 
-    public Long getId() {
-        return id;
+    public User() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void addRole(Role role){
+        roles.add(role);
     }
 
-    public String getName() {
-        return name;
+    public boolean hasRole(String roleName){
+        for (Role role: roles){
+           if(role.getAuthority().equals(roleName)){
+               return true;
+            }
+        }
+        return false;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
     }
 
-    public String getEmail() {
+    @Override
+    public String getUsername() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
     }
 
-    public String getPhone() {
-        return phone;
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public User() {
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 
     public User(Long id, String name, String email, String phone, LocalDate birthDate, String password ) {
@@ -100,16 +115,4 @@ public class User {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
 }
