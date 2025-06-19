@@ -1,0 +1,10 @@
+package br.com.devsuperior.dscommerce.repositories;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import br.com.devsuperior.dscommerce.entities.OrderItem;
+import br.com.devsuperior.dscommerce.entities.OrderItemPK;
+
+public interface OrderItemRepository extends JpaRepository<OrderItem, OrderItemPK> {
+
+}
