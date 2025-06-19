@@ -1,6 +1,6 @@
-package com.devsuperior.dscommerce.dto;
+package br.com.devsuperior.dscommerce.dto;
 
-import com.devsuperior.dscommerce.entities.User;
+import br.com.devsuperior.dscommerce.entities.User;
 
 public class ClientDTO {
 
