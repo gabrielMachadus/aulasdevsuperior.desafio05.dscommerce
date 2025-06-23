@@ -49,13 +49,6 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
 				.requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
 				.requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
-				/*
-				 * CORREÇÃO:
-				 * Mudamos a regra para .authenticated() para QUALQUER endpoint de /orders.
-				 * Isso garante que o usuário precisa estar logado, mas não impõe um perfil
-				 * específico. A lógica de negócio (se o cliente é dono do pedido ou se é ADMIN)
-				 * será corretamente tratada no OrderService.
-				 */
 				.requestMatchers("/orders/**").authenticated()
 				.requestMatchers(HttpMethod.GET, "/users/me").authenticated()
 				.anyRequest().permitAll());
